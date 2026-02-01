@@ -1,3 +1,5 @@
+const Item = require('../models/Item');
+
 // In-memory item storage (replace with database in production)
 let items = [
   { id: 1, name: 'Item 1', description: 'Description for item 1', quantity: 10, price: 99.99 },
@@ -49,10 +51,12 @@ const createItem = (req, res) => {
   try {
     const { name, description, quantity, price } = req.body;
     
-    if (!name) {
+    // Validate using Item model
+    const validation = Item.validate({ name, quantity, price });
+    if (!validation.isValid) {
       return res.status(400).json({
         success: false,
-        error: 'Name is required'
+        error: validation.errors.join(', ')
       });
     }
 

@@ -1,3 +1,5 @@
+const User = require('../models/User');
+
 // In-memory user storage (replace with database in production)
 let users = [
   { id: 1, name: 'John Doe', email: 'john@example.com', role: 'admin' },
@@ -49,10 +51,12 @@ const createUser = (req, res) => {
   try {
     const { name, email, role } = req.body;
     
-    if (!name || !email) {
+    // Validate using User model
+    const validation = User.validate({ name, email });
+    if (!validation.isValid) {
       return res.status(400).json({
         success: false,
-        error: 'Name and email are required'
+        error: validation.errors.join(', ')
       });
     }
 
